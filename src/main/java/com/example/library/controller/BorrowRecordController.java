@@ -19,8 +19,12 @@ public class BorrowRecordController {
         return borrowRecordRepository.findAll();
     }
     @GetMapping("{id}")
-    public BorrowRecord getBorrowRecordById(@PathVariable Long id) {
-        return borrowRecordRepository.findById(id).orElse(null);
+    public ResponseEntity<BorrowRecord> getBorrowRecordById(@PathVariable Long id) {
+        var borrow= borrowRecordRepository.findById(id).orElse(null);
+        if(borrow == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(borrow);
     }
     @PostMapping
     public BorrowRecord createBorrowRecord(@RequestBody BorrowRecord borrowRecord) {
@@ -28,12 +32,16 @@ public class BorrowRecordController {
     }
 
     @PutMapping("{id}")
-    public BorrowRecord updateBorrowRecord(@PathVariable Long id, @RequestBody BorrowRecord borrowRecord) {
-        return borrowRecordRepository.findById(id).map(borrowRecord1 -> {
+    public ResponseEntity<BorrowRecord> updateBorrowRecord(@PathVariable Long id, @RequestBody BorrowRecord borrowRecord) {
+        var borrow= borrowRecordRepository.findById(id).map(borrowRecord1 -> {
             borrowRecord1.setStudent(borrowRecord.getStudent());
             borrowRecord1.setBook(borrowRecord.getBook());
             return borrowRecordRepository.save(borrowRecord1);
         }).orElse(null);
+        if(borrow == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(borrow);
     }
     @DeleteMapping("{id}")
     public void deleteStudentById(@PathVariable Long id) {

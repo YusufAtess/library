@@ -19,8 +19,12 @@ public class CategoryController {
         return categoryRepository.findAll();
     }
     @GetMapping("{id}")
-    public Category getCategoryById(@PathVariable Long id) {
-        return categoryRepository.findById(id).orElse(null);
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+        var category= categoryRepository.findById(id).orElse(null);
+        if(category == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(category);
     }
     @PostMapping
     public Category createCategory(@RequestBody Category category) {
@@ -28,11 +32,15 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
-    public Category updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        return categoryRepository.findById(id).map(category1 -> {
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+        var category2=categoryRepository.findById(id).map(category1 -> {
             category1.setName(category.getName());
             return categoryRepository.save(category1);
         }).orElse(null);
+        if(category2 == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(category2);
     }
     @DeleteMapping("{id}")
     public void deleteCategoryById(@PathVariable Long id) {

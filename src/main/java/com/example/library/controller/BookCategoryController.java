@@ -19,8 +19,12 @@ public class BookCategoryController {
         return bookCategoryRepository.findAll();
     }
     @GetMapping("{id}")
-    public BookCategory getBookCategoryById(@PathVariable Long id) {
-        return bookCategoryRepository.findById(id).orElse(null);
+    public ResponseEntity<BookCategory> getBookCategoryById(@PathVariable Long id) {
+        var book= bookCategoryRepository.findById(id).orElse(null);
+        if(book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book);
     }
     @PostMapping
     public BookCategory createBookCategory(@RequestBody BookCategory bookCategory) {
@@ -28,12 +32,16 @@ public class BookCategoryController {
     }
 
     @PutMapping("{id}")
-    public BookCategory updateBookCategory(@PathVariable Long id, @RequestBody BookCategory bookCategory) {
-        return bookCategoryRepository.findById(id).map(bookCategory1 ->  {
+    public ResponseEntity<BookCategory> updateBookCategory(@PathVariable Long id, @RequestBody BookCategory bookCategory) {
+        var book= bookCategoryRepository.findById(id).map(bookCategory1 ->  {
             bookCategory1.setCategory( bookCategory.getCategory());
             bookCategory1.setBook( bookCategory.getBook());
             return bookCategoryRepository.save(bookCategory1);
         }).orElse(null);
+        if(book == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book);
     }
     @DeleteMapping("{id}")
     public void deleteStudentById(@PathVariable Long id) {
