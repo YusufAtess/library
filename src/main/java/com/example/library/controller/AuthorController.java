@@ -19,8 +19,12 @@ public class AuthorController {
         return authorRepository.findAll();
     }
     @GetMapping("{id}")
-    public Author getAuthorById(@PathVariable Long id) {
-        return authorRepository.findById(id).orElse(null);
+    public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
+        var author= authorRepository.findById(id).orElse(null);
+        if (author == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(author);
     }
     @PostMapping
     public Author createAuthor(@RequestBody Author author) {
@@ -28,12 +32,16 @@ public class AuthorController {
     }
 
     @PutMapping("{id}")
-    public Author updateAuthor(@PathVariable Long id, @RequestBody Author author) {
-        return authorRepository.findById(id).map(author1 -> {
+    public ResponseEntity<Author> updateAuthor(@PathVariable Long id, @RequestBody Author author) {
+        var author2= authorRepository.findById(id).map(author1 -> {
             author1.setName(author.getName());
             author1.setNationality(author.getNationality());
             return authorRepository.save(author1);
         }).orElse(null);
+        if (author2 == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(author2);
     }
     @DeleteMapping("{id}")
     public void deleteAuthorById(@PathVariable Long id) {

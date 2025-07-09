@@ -19,8 +19,12 @@ public class BookController {
         return bookRepository.findAll();
     }
     @GetMapping("{id}")
-    public Book getBookById(@PathVariable Long id) {
-        return bookRepository.findById(id).orElse(null);
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        var book= bookRepository.findById(id).orElse(null);
+        if(book==null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book);
     }
     @PostMapping
     public Book createBook(@RequestBody Book book) {
@@ -28,13 +32,17 @@ public class BookController {
     }
 
     @PutMapping("{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
-        return bookRepository.findById(id).map(book1 -> {
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        var book2= bookRepository.findById(id).map(book1 -> {
             book1.setTitle(book.getTitle());
             book1.setIsbn(book.getIsbn());
             book1.setAuthor(book.getAuthor());
             return bookRepository.save(book1);
         }).orElse(null);
+        if(book2==null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(book2);
     }
     @DeleteMapping("{id}")
     public void deleteBookById(@PathVariable Long id) {

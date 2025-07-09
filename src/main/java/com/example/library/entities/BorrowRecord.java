@@ -14,7 +14,7 @@ public class BorrowRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Many borrow records can belong to one student
+
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
