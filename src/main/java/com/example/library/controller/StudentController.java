@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import com.example.library.entities.Student;
 import com.example.library.repository.StudentRepository;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.example.library.response_dtos.ResponseStudentDto;
+import com.example.library.request_dtos.RequestStudentDto;
 
 @RestController
 @RequestMapping("/api/student")
@@ -15,24 +19,28 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
     @GetMapping
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<ResponseStudentDto> getAllStudents() {
+        return studentRepository.findAll().stream().map(student -> new ResponseStudentDto(student.getName(),student.getEmail())).collect(Collectors.toList());
     }
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
+    public ResponseEntity<ResponseStudentDto> getStudentById(@PathVariable Long id) {
         var student= studentRepository.findById(id).orElse(null);
         if(student == null) {
             return  ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(student);
+        return ResponseEntity.ok(new ResponseStudentDto(student.getName(),student.getEmail()));
     }
     @PostMapping
-    public Student createStudent(@RequestBody Student student) {
-        return studentRepository.save(student);
+    public ResponseStudentDto createStudent(@RequestBody RequestStudentDto student) {
+        Student student1 = new Student();
+        student1.setName(student.getName());
+        student1.setEmail(student.getEmail());
+        Student student2= studentRepository.save(student1);
+        return new ResponseStudentDto(student2.getName(), student2.getEmail());
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public ResponseEntity<ResponseStudentDto> updateStudent(@PathVariable Long id, @RequestBody RequestStudentDto student) {
         var student2= studentRepository.findById(id).map(student1 -> {
             student1.setName(student.getName());
             student1.setEmail(student.getEmail());
@@ -41,7 +49,7 @@ public class StudentController {
         if(student2 == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(student2);
+        return ResponseEntity.ok(new ResponseStudentDto(student.getName(),student.getEmail()));
     }
     @DeleteMapping("{id}")
     public void deleteStudentById(@PathVariable Long id) {
