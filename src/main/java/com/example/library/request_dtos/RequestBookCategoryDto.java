@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class RequestBookCategoryDto {
-    private RequestCategoryDto category;
-    private RequestBookDto book;
+    private long category_id;
+    private long book_id;
 }

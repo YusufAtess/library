@@ -46,30 +46,19 @@ public class BookCategoryService {
 
     public ResponseBookCategoryDto createBookCategory(RequestBookCategoryDto bookCategory) {
         BookCategory bookCategory1 = new BookCategory();
-        String isbn = bookCategory.getBook().getIsbn();
-        String title = bookCategory.getBook().getTitle();
-        String author_name = bookCategory.getBook().getAuthor().getName();
-        String author_nationality = bookCategory.getBook().getAuthor().getNationality();
-        String category_name = bookCategory.getCategory().getName();
-        Author author = authorRepository.findByNameAndNationality(author_name, author_nationality).orElseGet(() -> authorRepository.save(new Author(null, author_name, author_nationality)));
-        Book book = bookRepository.findByIsbn(isbn).orElseGet(() -> bookRepository.save(new Book(null, title, isbn, author)));
-        Category category = categoryRepository.findByName(category_name).orElseGet(() -> categoryRepository.save(new Category(null, category_name)));
+
+        Book book = bookRepository.findById(bookCategory.getBook_id()).orElseGet(null);
+        Category category = categoryRepository.findById(bookCategory.getCategory_id()).orElseGet(null);
         bookCategory1.setBook(book);
         bookCategory1.setCategory(category);
         bookCategoryRepository.save(bookCategory1);
-        return new ResponseBookCategoryDto(new ResponseCategoryDto(category_name),new ResponseBookDto(title,isbn,new ResponseAuthorDto(author_name,author_nationality)));
+        return new ResponseBookCategoryDto(new ResponseCategoryDto(category.getName()),new ResponseBookDto(book.getTitle(),book.getIsbn(),new ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality())));
     }
 
     public BookCategory updateBookCategory(Long id,RequestBookCategoryDto bookCategory) {
         BookCategory bookCategory3 = new BookCategory();
-        String isbn = bookCategory.getBook().getIsbn();
-        String title = bookCategory.getBook().getTitle();
-        String author_name = bookCategory.getBook().getAuthor().getName();
-        String author_nationality = bookCategory.getBook().getAuthor().getNationality();
-        String category_name = bookCategory.getCategory().getName();
-        Author author = authorRepository.findByNameAndNationality(author_name, author_nationality).orElseGet(() -> authorRepository.save(new Author(null, author_name, author_nationality)));
-        Book book = bookRepository.findByIsbn(isbn).orElseGet(() -> bookRepository.save(new Book(null, title, isbn, author)));
-        Category category = categoryRepository.findByName(category_name).orElseGet(() -> categoryRepository.save(new Category(null, category_name)));
+        Book book = bookRepository.findById(bookCategory.getBook_id()).orElse(null);
+        Category category = categoryRepository.findById(bookCategory.getCategory_id()).orElse(null);
         bookCategory3.setBook(book);
         bookCategory3.setCategory(category);
         return bookCategoryRepository.findById(id).map(bookCategory1 ->  {

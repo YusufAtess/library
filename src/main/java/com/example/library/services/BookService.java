@@ -46,19 +46,15 @@ public class BookService {
         Book book1= new Book();
         book1.setTitle(book.getTitle());
         book1.setIsbn(book.getIsbn());
-        String name=book.getAuthor().getName();
-        String nationality=book.getAuthor().getNationality();
-        Author author=authorRepository.findByNameAndNationality(name,nationality).orElseGet(() -> authorRepository.save(new Author(null,name,nationality)));
+        Author author=authorRepository.findById(book.getAuthor_id()).orElse(null);
         book1.setAuthor(author);
         Book book2= bookRepository.save(book1);
-        return new ResponseBookDto(book2.getTitle(),book2.getIsbn(),new ResponseAuthorDto(book2.getAuthor().getName(),book.getAuthor().getNationality()));
+        return new ResponseBookDto(book2.getTitle(),book2.getIsbn(),new ResponseAuthorDto(author.getName(),author.getNationality()));
     }
 
 
     public Book updateBook(Long id, RequestBookDto book) {
-        String nationality=book.getAuthor().getNationality();
-        String name=book.getAuthor().getName();
-        Author author=authorRepository.findByNameAndNationality(name,nationality).orElseGet(() -> authorRepository.save(new Author(null,name,nationality)));
+        Author author=authorRepository.findById(book.getAuthor_id()).orElse(null);
         return  bookRepository.findById(id).map(book1 -> {
             book1.setTitle(book.getTitle());
             book1.setIsbn(book.getIsbn());

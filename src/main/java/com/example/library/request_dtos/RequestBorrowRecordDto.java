@@ -9,8 +9,8 @@ import org.apache.coyote.Request;
 import java.util.Date;
 @Data
 public class RequestBorrowRecordDto {
-    private RequestStudentDto student;
-    private RequestBookDto book;
+    private long student_id;
+    private long book_id;
     private Date borrowDate;
     private Date returnDate;
 }

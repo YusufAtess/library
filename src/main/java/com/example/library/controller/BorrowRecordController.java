@@ -43,9 +43,13 @@ public class BorrowRecordController {
                 new ResponseBookDto(borrowRecord.getBook().getTitle(),borrowRecord.getBook().getIsbn(),new ResponseAuthorDto(borrowRecord.getBook().getAuthor().getName(),borrowRecord.getBook().getAuthor().getNationality())),
                 borrowRecord.getBorrowDate(),borrowRecord.getReturnDate()));
     }
-    @GetMapping("search/{id}")
+    @GetMapping("search_studentbook/{id}")
     public List<ResponseBookDto> getBorrowRecordByStudent(@PathVariable Long id) {
         return borrowRecordService.getBorrowRecordByStudent(id);
+    }
+    @GetMapping("search_bookstudent/{id}")
+    public List<ResponseStudentDto> getBorrowRecordByBook(@RequestParam Long id) {
+        return borrowRecordService.getBorrowRecordByBook(id);
     }
     @GetMapping("mostborrowed/{num}")
     public List<ResponseBookNumDto> getMostBorrowedBooks(@PathVariable int num) {

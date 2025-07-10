@@ -61,6 +61,10 @@ public class BorrowRecordService {
         return borrowRecordRepository.findByStudent_Id(id).stream().map(borrowRecord->new ResponseBookDto(borrowRecord.getBook().getTitle(),borrowRecord.getBook().getIsbn(),
                 new ResponseAuthorDto(borrowRecord.getBook().getAuthor().getName(),borrowRecord.getBook().getAuthor().getNationality()))).collect(Collectors.toList());
     }
+    public List<ResponseStudentDto> getBorrowRecordByBook(Long id) {
+        return borrowRecordRepository.findByBook_Id(id).stream().map(borrowRecord->new ResponseStudentDto(borrowRecord.getStudent().getName(),borrowRecord.getStudent().getEmail()
+                )).collect(Collectors.toList());
+    }
 
     public List<ResponseBookNumDto> getMostBorrowedBooks(int num) {
         List<ResponseBookNumDto> sortedBooks= bookRepository.findAll().stream().map(book->new ResponseBookNumDto(book.getTitle(),book.getIsbn(),
@@ -75,15 +79,8 @@ public class BorrowRecordService {
 
     public ResponseBorrowRecordDto createBorrowRecord(RequestBorrowRecordDto borrowRecord) {
         BorrowRecord borrowRecord1 = new BorrowRecord();
-        String isbn = borrowRecord.getBook().getIsbn();
-        String title = borrowRecord.getBook().getTitle();
-        String author_name = borrowRecord.getBook().getAuthor().getName();
-        String author_nationality = borrowRecord.getBook().getAuthor().getNationality();
-        String student_name = borrowRecord.getStudent().getName();
-        String student_email = borrowRecord.getStudent().getEmail();
-        Author author = authorRepository.findByNameAndNationality(author_name, author_nationality).orElseGet(() -> authorRepository.save(new Author(null, author_name, author_nationality)));
-        Book book = bookRepository.findByIsbn(isbn).orElseGet(() -> bookRepository.save(new Book(null, title, isbn, author)));
-        Student student = studentRepository.findByNameAndEmail(student_name,student_email).orElseGet(() -> studentRepository.save(new Student(null,student_name,student_email)));
+        Book book = bookRepository.findById(borrowRecord.getBook_id()).orElseGet(null);
+        Student student = studentRepository.findById(borrowRecord.getStudent_id()).orElseGet(null);
         borrowRecord1.setBook(book);
         borrowRecord1.setStudent(student);
         borrowRecord1.setBorrowDate(borrowRecord.getBorrowDate());
@@ -97,17 +94,10 @@ public class BorrowRecordService {
 
     public BorrowRecord updateBorrowRecord(Long id,RequestBorrowRecordDto borrowRecord) {
         BorrowRecord borrowRecord1 = new BorrowRecord();
-        String isbn = borrowRecord.getBook().getIsbn();
-        String title = borrowRecord.getBook().getTitle();
-        String author_name = borrowRecord.getBook().getAuthor().getName();
-        String author_nationality = borrowRecord.getBook().getAuthor().getNationality();
-        String student_name = borrowRecord.getStudent().getName();
-        String student_email = borrowRecord.getStudent().getEmail();
-        Author author = authorRepository.findByNameAndNationality(author_name, author_nationality).orElseGet(() -> authorRepository.save(new Author(null, author_name, author_nationality)));
-        Book book = bookRepository.findByIsbn(isbn).orElseGet(() -> bookRepository.save(new Book(null, title, isbn, author)));
-        Student student = studentRepository.findByNameAndEmail(student_name,student_email).orElseGet(() -> studentRepository.save(new Student(null,student_name,student_email)));
-        borrowRecord1.setBook(book);
+        Book book = bookRepository.findById(borrowRecord.getBook_id()).orElse(null);
+        Student student = studentRepository.findById(borrowRecord.getStudent_id()).orElse(null);
         borrowRecord1.setStudent(student);
+        borrowRecord1.setBook(book);
         return borrowRecordRepository.findById(id).map(borrowRecord2 -> {
             borrowRecord2.setStudent(borrowRecord1.getStudent());
             borrowRecord2.setBook(borrowRecord1.getBook());
