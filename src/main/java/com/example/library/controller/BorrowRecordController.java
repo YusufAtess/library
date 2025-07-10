@@ -40,7 +40,7 @@ public class BorrowRecordController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new ResponseBorrowRecordDto(new ResponseStudentDto(borrowRecord.getStudent().getName(),borrowRecord.getStudent().getEmail()),
-                new ResponseBookDto(borrowRecord.getBook().getTitle(),borrowRecord.getBook().getIsbn(),new ResponseAuthorDto(borrowRecord.getBook().getAuthor().getName(),borrowRecord.getBook().getAuthor().getNationality())),
+                new ResponseBookDto(borrowRecord.getBook().getTitle(),borrowRecord.getBook().getIsbn(),borrowRecord.getBook().getStock(),new  ResponseAuthorDto(borrowRecord.getBook().getAuthor().getName(),borrowRecord.getBook().getAuthor().getNationality())),
                 borrowRecord.getBorrowDate(),borrowRecord.getReturnDate()));
     }
     @GetMapping("search_studentbook/{id}")
@@ -56,11 +56,14 @@ public class BorrowRecordController {
         return borrowRecordService.getMostBorrowedBooks(num);
     }
     @PostMapping
-    public ResponseBorrowRecordDto createBorrowRecord(@RequestBody RequestBorrowRecordDto borrowRecord) {
+    public ResponseEntity<ResponseBorrowRecordDto> createBorrowRecord(@RequestBody RequestBorrowRecordDto borrowRecord) {
         var borrowRecord2=borrowRecordService.createBorrowRecord(borrowRecord);
-        return new ResponseBorrowRecordDto(new ResponseStudentDto(borrowRecord2.getStudent().getName(),borrowRecord2.getStudent().getEmail()),
-                new ResponseBookDto(borrowRecord2.getBook().getTitle(),borrowRecord2.getBook().getIsbn(),new ResponseAuthorDto(borrowRecord2.getBook().getAuthor().getName(),borrowRecord2.getBook().getAuthor().getNationality())),
-                borrowRecord2.getBorrowDate(),borrowRecord2.getReturnDate());
+        if(borrowRecord2 == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new ResponseBorrowRecordDto(new ResponseStudentDto(borrowRecord2.getStudent().getName(),borrowRecord2.getStudent().getEmail()),
+                new ResponseBookDto(borrowRecord2.getBook().getTitle(),borrowRecord2.getBook().getIsbn(),borrowRecord2.getBook().getStock(),new  ResponseAuthorDto(borrowRecord2.getBook().getAuthor().getName(),borrowRecord2.getBook().getAuthor().getNationality())),
+                borrowRecord2.getBorrowDate(),borrowRecord2.getReturnDate()));
     }
 
     @PutMapping("{id}")
@@ -70,7 +73,7 @@ public class BorrowRecordController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new ResponseBorrowRecordDto(new ResponseStudentDto(borrow.getStudent().getName(),borrow.getStudent().getEmail()),
-                new ResponseBookDto(borrow.getBook().getTitle(),borrow.getBook().getIsbn(),new ResponseAuthorDto(borrow.getBook().getAuthor().getName(),borrow.getBook().getAuthor().getNationality())),
+                new ResponseBookDto(borrow.getBook().getTitle(),borrow.getBook().getIsbn(),borrow.getBook().getStock(),new  ResponseAuthorDto(borrow.getBook().getAuthor().getName(),borrow.getBook().getAuthor().getNationality())),
                 borrow.getBorrowDate(),borrow.getReturnDate()));
     }
     @DeleteMapping("{id}")
