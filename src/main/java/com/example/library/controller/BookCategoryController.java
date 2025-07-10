@@ -38,7 +38,7 @@ public class BookCategoryController {
         }
         return ResponseEntity.ok(new ResponseBookCategoryDto(new ResponseCategoryDto(bookCategory.getCategory().getName()),
                 new ResponseBookDto(bookCategory.getBook().getTitle(),bookCategory.getBook().getIsbn(),
-                        new ResponseAuthorDto(bookCategory.getBook().getAuthor().getName(),bookCategory.getBook().getAuthor().getNationality()))));
+                       bookCategory.getBook().getStock(), new ResponseAuthorDto(bookCategory.getBook().getAuthor().getName(),bookCategory.getBook().getAuthor().getNationality()))));
     }
     @PostMapping
     public ResponseBookCategoryDto createBookCategory(@RequestBody RequestBookCategoryDto bookCategory) {
@@ -50,7 +50,7 @@ public class BookCategoryController {
         if(book2 == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new ResponseBookCategoryDto(new ResponseCategoryDto(book2.getCategory().getName()),new ResponseBookDto(book2.getBook().getTitle(),book2.getBook().getIsbn(),new ResponseAuthorDto(book2.getBook().getAuthor().getName(),book2.getBook().getAuthor().getNationality()))));
+        return ResponseEntity.ok(new ResponseBookCategoryDto(new ResponseCategoryDto(book2.getCategory().getName()),new ResponseBookDto(book2.getBook().getTitle(),book2.getBook().getIsbn(),book2.getBook().getStock(),new  ResponseAuthorDto(book2.getBook().getAuthor().getName(),book2.getBook().getAuthor().getNationality()))));
     }
     @DeleteMapping("{id}")
     public void deleteStudentById(@PathVariable Long id) {

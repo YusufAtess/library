@@ -8,5 +8,6 @@ import lombok.Getter;
 public class ResponseBookDto {
     private String title;
     private String isbn;
+    private int stock;
     private ResponseAuthorDto author;
 }

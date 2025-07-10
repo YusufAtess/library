@@ -34,7 +34,7 @@ public class BookService {
 
     public List<ResponseBookDto> getAllBooks() {
         return bookRepository.findAll().stream().map(book->new ResponseBookDto(book.getTitle(),book.getIsbn(),
-                new ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality()))).collect(Collectors.toList());
+                book.getStock(), new ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality()))).collect(Collectors.toList());
     }
 
     public Book getBookById(Long id) {
@@ -46,10 +46,11 @@ public class BookService {
         Book book1= new Book();
         book1.setTitle(book.getTitle());
         book1.setIsbn(book.getIsbn());
+        book1.setStock(book.getStock());
         Author author=authorRepository.findById(book.getAuthor_id()).orElse(null);
         book1.setAuthor(author);
         Book book2= bookRepository.save(book1);
-        return new ResponseBookDto(book2.getTitle(),book2.getIsbn(),new ResponseAuthorDto(author.getName(),author.getNationality()));
+        return new ResponseBookDto(book2.getTitle(),book2.getIsbn(), book2.getStock(),new  ResponseAuthorDto(author.getName(),author.getNationality()));
     }
 
 
@@ -58,6 +59,7 @@ public class BookService {
         return  bookRepository.findById(id).map(book1 -> {
             book1.setTitle(book.getTitle());
             book1.setIsbn(book.getIsbn());
+            book1.setStock(book.getStock());
             book1.setAuthor(author);
             return bookRepository.save(book1);
         }).orElse(null);

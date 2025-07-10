@@ -36,7 +36,7 @@ public class BookCategoryService {
     public List<ResponseBookCategoryDto> getAllBookCategories() {
         return bookCategoryRepository.findAll().stream().map(bookCategory->
                         new ResponseBookCategoryDto(new ResponseCategoryDto(bookCategory.getCategory().getName()),
-                                new ResponseBookDto(bookCategory.getBook().getTitle(),bookCategory.getBook().getIsbn(),new ResponseAuthorDto(bookCategory.getBook().getAuthor().getName(),bookCategory.getBook().getAuthor().getNationality()))))
+                                new ResponseBookDto(bookCategory.getBook().getTitle(),bookCategory.getBook().getIsbn(),bookCategory.getBook().getStock(),new  ResponseAuthorDto(bookCategory.getBook().getAuthor().getName(),bookCategory.getBook().getAuthor().getNationality()))))
                 .collect(Collectors.toList());
     }
 
@@ -52,7 +52,7 @@ public class BookCategoryService {
         bookCategory1.setBook(book);
         bookCategory1.setCategory(category);
         bookCategoryRepository.save(bookCategory1);
-        return new ResponseBookCategoryDto(new ResponseCategoryDto(category.getName()),new ResponseBookDto(book.getTitle(),book.getIsbn(),new ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality())));
+        return new ResponseBookCategoryDto(new ResponseCategoryDto(category.getName()),new ResponseBookDto(book.getTitle(),book.getIsbn(),book.getStock(),new  ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality())));
     }
 
     public BookCategory updateBookCategory(Long id,RequestBookCategoryDto bookCategory) {

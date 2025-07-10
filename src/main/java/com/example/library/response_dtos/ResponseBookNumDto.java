@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ResponseBookNumDto {
     private String title;
     private String isbn;
+    private int stock;
     private ResponseAuthorDto author;
     private long num;
 }
