@@ -1,9 +1,10 @@
 package com.example.library.controller;
 
+
+import com.example.library.services.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.library.entities.Category;
-import com.example.library.repository.CategoryRepository;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,18 +14,18 @@ import com.example.library.request_dtos.RequestCategoryDto;
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
+       this.categoryService = categoryService;
     }
     @GetMapping
     public List<ResponseCategoryDto> getAllCategory() {
-        return categoryRepository.findAll().stream().map(category -> new ResponseCategoryDto(category.getName())).collect(Collectors.toList());
+        return categoryService.getAllCategory();
     }
     @GetMapping("{id}")
     public ResponseEntity<ResponseCategoryDto> getCategoryById(@PathVariable Long id) {
-        var category= categoryRepository.findById(id).orElse(null);
+        var category= categoryService.getCategoryById(id);
         if(category == null) {
             return ResponseEntity.notFound().build();
         }
@@ -32,18 +33,12 @@ public class CategoryController {
     }
     @PostMapping
     public ResponseCategoryDto createCategory(@RequestBody RequestCategoryDto category) {
-        Category category1= new Category();
-        category1.setName(category.getName());
-        Category category2= categoryRepository.save(category1);
-        return new ResponseCategoryDto(category2.getName());
+       return categoryService.createCategory(category);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<ResponseCategoryDto> updateCategory(@PathVariable Long id, @RequestBody RequestCategoryDto category) {
-        var category2=categoryRepository.findById(id).map(category1 -> {
-            category1.setName(category.getName());
-            return categoryRepository.save(category1);
-        }).orElse(null);
+        var category2=categoryService.updateCategory(id, category);
         if(category2 == null) {
             return ResponseEntity.notFound().build();
         }
@@ -51,7 +46,7 @@ public class CategoryController {
     }
     @DeleteMapping("{id}")
     public void deleteCategoryById(@PathVariable Long id) {
-        categoryRepository.deleteById(id);
+       categoryService.deleteCategoryById(id);
     }
 
 }
