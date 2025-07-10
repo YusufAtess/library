@@ -7,5 +7,5 @@ import lombok.Data;
 public class RequestBookDto {
     private String title;
     private String isbn;
-    private RequestAuthorDto author;
+    private long author_id;
 }

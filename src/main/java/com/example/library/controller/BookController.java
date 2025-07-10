@@ -45,7 +45,7 @@ public class BookController {
         if(book2==null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new ResponseBookDto(book2.getTitle(),book2.getIsbn(),new ResponseAuthorDto(book2.getAuthor().getName(),book.getAuthor().getNationality())));
+        return ResponseEntity.ok(new ResponseBookDto(book2.getTitle(),book2.getIsbn(),new ResponseAuthorDto(book2.getAuthor().getName(),book2.getAuthor().getNationality())));
     }
     @DeleteMapping("{id}")
     public void deleteBookById(@PathVariable Long id) {

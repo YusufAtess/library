@@ -13,12 +13,12 @@ public class BookCategory {
     private Long id;
 
     // Many borrow records can belong to one student
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     // Many borrow records can belong to one book
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 

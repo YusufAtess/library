@@ -15,12 +15,12 @@ public class BorrowRecord {
     private Long id;
 
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     // Many borrow records can belong to one book
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
