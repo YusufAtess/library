@@ -37,7 +37,7 @@ public class StudentController {
 
     @PutMapping("{id}")
     public ResponseEntity<ResponseStudentDto> updateStudent(@PathVariable Long id, @RequestBody RequestStudentDto student) {
-        var student2= studentService.getStudentById(id);
+        var student2= studentService.updateStudent(id,student);
         if(student2 == null) {
             return ResponseEntity.notFound().build();
         }
