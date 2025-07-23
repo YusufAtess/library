@@ -14,6 +14,7 @@ import com.example.library.entities.BookCategory;
 import com.example.library.repository.BookCategoryRepository;
 import com.example.library.request_dtos.RequestBookCategoryDto;
 import com.example.library.response_dtos.ResponseBookCategoryDto;
+import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -25,18 +26,27 @@ public class BookCategoryService {
     private final BookCategoryRepository bookCategoryRepository;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-    private final AuthorRepository authorRepository;
-    public BookCategoryService(BookCategoryRepository bookCategoryRepository, BookRepository bookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository) {
+    private final GoogleBooksService googleBooksService;
+
+    public BookCategoryService(BookCategoryRepository bookCategoryRepository, BookRepository bookRepository, CategoryRepository categoryRepository, AuthorRepository authorRepository, GoogleBooksService googleBooksService) {
         this.bookCategoryRepository = bookCategoryRepository;
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
-        this.authorRepository = authorRepository;
+        this.googleBooksService = googleBooksService;
     }
 
     public List<ResponseBookCategoryDto> getAllBookCategories() {
         return bookCategoryRepository.findAll().stream().map(bookCategory->
-                        new ResponseBookCategoryDto(new ResponseCategoryDto(bookCategory.getCategory().getName()),
-                                new ResponseBookDto(bookCategory.getBook().getTitle(),bookCategory.getBook().getIsbn(),bookCategory.getBook().getStock(),new  ResponseAuthorDto(bookCategory.getBook().getAuthor().getName(),bookCategory.getBook().getAuthor().getNationality()))))
+                {
+                    try {
+                        return new ResponseBookCategoryDto(new ResponseCategoryDto(bookCategory.getCategory().getName()),
+                                new ResponseBookDto(bookCategory.getBook().getTitle(),bookCategory.getBook().getIsbn(),bookCategory.getBook().getStock(),new  ResponseAuthorDto(bookCategory.getBook().getAuthor().getName(),bookCategory.getBook().getAuthor().getNationality()),googleBooksService.fetchBookByIsbn(bookCategory.getBook().getIsbn()).getThumbnail(),
+                                        googleBooksService.fetchBookByIsbn(bookCategory.getBook().getIsbn()).getPublisher(),googleBooksService.fetchBookByIsbn(bookCategory.getBook().getIsbn()).getAverageRating(),
+                                        googleBooksService.fetchBookByIsbn(bookCategory.getBook().getIsbn()).getRatingsCount()));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +54,7 @@ public class BookCategoryService {
         return bookCategoryRepository.findById(id).orElse(null);
     }
 
-    public ResponseBookCategoryDto createBookCategory(RequestBookCategoryDto bookCategory) {
+    public ResponseBookCategoryDto createBookCategory(RequestBookCategoryDto bookCategory) throws JSONException {
         BookCategory bookCategory1 = new BookCategory();
 
         Book book = bookRepository.findById(bookCategory.getBook_id()).orElseGet(null);
@@ -52,7 +62,8 @@ public class BookCategoryService {
         bookCategory1.setBook(book);
         bookCategory1.setCategory(category);
         bookCategoryRepository.save(bookCategory1);
-        return new ResponseBookCategoryDto(new ResponseCategoryDto(category.getName()),new ResponseBookDto(book.getTitle(),book.getIsbn(),book.getStock(),new  ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality())));
+        return new ResponseBookCategoryDto(new ResponseCategoryDto(category.getName()),new ResponseBookDto(book.getTitle(),book.getIsbn(),book.getStock(),new  ResponseAuthorDto(book.getAuthor().getName(),book.getAuthor().getNationality()),googleBooksService.fetchBookByIsbn(book.getIsbn()).getThumbnail(),
+                googleBooksService.fetchBookByIsbn(book.getIsbn()).getPublisher(),googleBooksService.fetchBookByIsbn(book.getIsbn()).getAverageRating(),googleBooksService.fetchBookByIsbn(book.getIsbn()).getRatingsCount()));
     }
 
     public BookCategory updateBookCategory(Long id,RequestBookCategoryDto bookCategory) {

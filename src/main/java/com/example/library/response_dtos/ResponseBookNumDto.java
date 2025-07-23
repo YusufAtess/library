@@ -13,4 +13,8 @@ public class ResponseBookNumDto {
     private int stock;
     private ResponseAuthorDto author;
     private long num;
+    private String thumbnail;
+    private String publisher;
+    private Integer averageRating;
+    private Integer ratingsCount;
 }

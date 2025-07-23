@@ -6,4 +6,5 @@ import lombok.Data;
 public class RequestStudentDto {
     private String name;
     private String email;
+    private Long userId;
 }

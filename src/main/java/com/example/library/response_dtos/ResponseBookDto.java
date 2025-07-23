@@ -10,4 +10,8 @@ public class ResponseBookDto {
     private String isbn;
     private int stock;
     private ResponseAuthorDto author;
+    private String thumbnail;
+    private String publisher;
+    private Integer averageRating;
+    private Integer ratingsCount;
 }
